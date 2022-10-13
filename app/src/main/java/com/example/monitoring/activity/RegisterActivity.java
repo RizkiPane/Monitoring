@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,23 +44,24 @@ public class RegisterActivity extends AppCompatActivity {
                 ConfirmPass = ConfirmPassword.getText().toString();
 
                 if (ConfirmPass.equals(Pass)) {
-                    moveToRegister();
+                    moveToRegister(User, Pass);
                 } else {
                     Password.setError("password tidak sama");
                 }
-
 
             }
         });
     }
 
-    private void moveToRegister() {
+    private void moveToRegister(String User, String Pass ) {
+        Log.d("TAG", "moveToRegister "+User +  " " + Pass);
         ApiInterface apiInterface = ApiServer.getClient().create(ApiInterface.class);
         Call<ResponseLogin> Call = apiInterface.register(User, Pass);
         Call.enqueue(new Callback<ResponseLogin>() {
             @Override
-            public void onResponse(retrofit2.Call<ResponseLogin> call, Response<ResponseLogin> response) {
+            public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 if (response.isSuccessful()){
+                    Log.d("TAG", "onResponse." +response.isSuccessful());
                     Toast.makeText(getApplicationContext(), "Berhasil mendafatar", Toast.LENGTH_SHORT).toString();
                 }else {
                     Toast.makeText(getApplicationContext(), "Gagal mendafatar", Toast.LENGTH_SHORT).show();
@@ -67,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(retrofit2.Call<ResponseLogin> call, Throwable t) {
+            public void onFailure(Call<ResponseLogin> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
 
             }
